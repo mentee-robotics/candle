@@ -44,6 +44,7 @@ namespace mab
         motorStatus["seq"] = 0.0;
     }
 
+    
     Md80::~Md80()
     {
     }
@@ -92,14 +93,14 @@ namespace mab
                 positionTarget = watchdogPosPercentage * softMaxPosition;
                 torqueSet = -1 * watchdogTorqueOffset;
             }
-            std::cout << "[md80 WATCHDOG ] position of motor " << std::to_string(canId) << 
-            " is out of range. Current Position " << std::to_string(curr_pos) << 
-            " not in range " << std::to_string(softMinPosition) << " - " << std::to_string(softMaxPosition) << std::endl << 
-            "[md80 Watchdog] new targets: " << std::endl << 
-            "position: " << std::to_string(positionTarget) << std::endl <<
-            "torque: " << std::to_string(torqueSet) << std::endl << 
-            "kp: " << std::to_string(impedanceController.kp) << std::endl <<
-            "kd: " << std::to_string(impedanceController.kd) << std::endl;
+            // std::cout << "[md80 WATCHDOG ] position of motor " << std::to_string(canId) << 
+            // " is out of range. Current Position " << std::to_string(curr_pos) << 
+            // " not in range " << std::to_string(softMinPosition) << " - " << std::to_string(softMaxPosition) << std::endl << 
+            // "[md80 Watchdog] new targets: " << std::endl << 
+            // "position: " << std::to_string(positionTarget) << std::endl <<
+            // "torque: " << std::to_string(torqueSet) << std::endl << 
+            // "kp: " << std::to_string(impedanceController.kp) << std::endl <<
+            // "kd: " << std::to_string(impedanceController.kd) << std::endl;
         }
     }
 
