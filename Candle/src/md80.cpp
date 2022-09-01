@@ -14,8 +14,10 @@ namespace mab
         motorStatus["position"] = 0.0;
         motorStatus["velocity"] = 0.0;
         motorStatus["torque"] = 0.0;
+        motorStatus["actorque"] = 0.0;
         motorStatus["time"] = 0.0;
         motorStatus["seq"] = 0.0;
+        motorStatus["temp"] = 0.0;
 
         // Get watchdog params
         watchdogKP = config["kp"];
@@ -38,10 +40,13 @@ namespace mab
         canId = _canID;
         commandFrame.canId = _canID;
         motorStatus["position"] = 0.0;
+        motorStatus["actorque"] = 0.0;
         motorStatus["velocity"] = 0.0;
         motorStatus["torque"] = 0.0;
         motorStatus["time"] = 0.0;
         motorStatus["seq"] = 0.0;
+        motorStatus["temp"] = 0.0;
+
     }
 
     
@@ -191,16 +196,22 @@ namespace mab
             return;
         errorVector = *(uint16_t *)&_responseFrame->fromMd80.data[1];
         temperature = _responseFrame->fromMd80.data[3];
+        prevPosition = position;
         motorStatus["position"] = position = *(float *)&_responseFrame->fromMd80.data[4];
-        motorStatus["velocity"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
+        motorStatus["actorque"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
         motorStatus["torque"] = torque = *(float *)&_responseFrame->fromMd80.data[12];
+        motorStatus["temp"] = temperature;
+
+        
     }
 
     void Md80::__updateResponseData(StdMd80ResponseFrame_t *_responseFrame, double time, int seq)
     {
         this->__updateResponseData(_responseFrame);
+        motorStatus["velocity"] = (position - prevPosition) / (time - prevTime);
         motorStatus["time"] = time;
         motorStatus["seq"] = seq;
+        prevTime = time;
     }
 
     void Md80::__updateRegulatorsAdjusted(bool adjusted)
