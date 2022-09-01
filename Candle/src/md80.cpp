@@ -14,7 +14,7 @@ namespace mab
         motorStatus["position"] = 0.0;
         motorStatus["velocity"] = 0.0;
         motorStatus["torque"] = 0.0;
-        motorStatus["actorque"] = 0.0;
+        motorStatus["polish_tor"] = 0.0;
         motorStatus["time"] = 0.0;
         motorStatus["seq"] = 0.0;
         motorStatus["temp"] = 0.0;
@@ -40,7 +40,7 @@ namespace mab
         canId = _canID;
         commandFrame.canId = _canID;
         motorStatus["position"] = 0.0;
-        motorStatus["actorque"] = 0.0;
+        motorStatus["polish_tor"] = 0.0;
         motorStatus["velocity"] = 0.0;
         motorStatus["torque"] = 0.0;
         motorStatus["time"] = 0.0;
@@ -198,7 +198,7 @@ namespace mab
         temperature = _responseFrame->fromMd80.data[3];
         prevPosition = position;
         motorStatus["position"] = position = *(float *)&_responseFrame->fromMd80.data[4];
-        motorStatus["actorque"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
+        motorStatus["polish_tor"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
         motorStatus["torque"] = torque = *(float *)&_responseFrame->fromMd80.data[12];
         motorStatus["temp"] = temperature;
 
