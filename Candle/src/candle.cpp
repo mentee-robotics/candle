@@ -272,6 +272,42 @@ namespace mab
         return false;
     }
 
+    bool Candle::addMd80(uint16_t canId, bool printFailure)
+    {
+        if (inUpdateMode())
+            return false;
+        
+        if (md80s.count(canId))
+        {
+            vout << "Md80 with ID: " << canId << " is already on the update list." << statusOK << std::endl;
+            return true;
+        }
+
+        if ((int)md80s.size() >= maxDevices)
+        {
+            vout << "Cannot add more drives in current FAST_MODE. Max devices in current mode: " << maxDevices << statusFAIL << std::endl;
+            return false;
+        }
+
+        AddMd80Frame_t add = {USB_FRAME_MD80_ADD, canId};
+        if (usb->transmit((char *)&add, sizeof(AddMd80Frame_t), true))
+            if (usb->rxBuffer[0] == USB_FRAME_MD80_ADD)
+                if (usb->rxBuffer[1] == true)
+                {
+                    vout << "Added Md80." << statusOK << std::endl;
+                    md80s.insert(std::pair<int, Md80>(canId, Md80(canId)));
+                    md80Ids.push_back(canId);
+                    mab::Md80 &newDrive = md80s.at(canId);
+                    sendGetInfoFrame(newDrive);
+                    sendMotionCommand(newDrive, newDrive.getPosition(), 0.0f, 0.0f);
+                    newDrive.setTargetPosition(newDrive.getPosition());
+                    return true;
+                }
+        if (printFailure)
+            vout << "Failed to add Md80." << statusFAIL << std::endl;
+        return false;
+    }
+
     std::vector<uint16_t> Candle::ping(mab::CANdleBaudrate_E baudrate)
     {
         if (!this->configCandleBaudrate(baudrate))
@@ -652,6 +688,7 @@ namespace mab
         }
 
         int length = 1 + md80s.size() * sizeof(StdMd80CommandFrame_t);
+
         usb->transmit(tx, length, false, 100, candleId);
         uint64_t nsec = std::chrono::duration_cast<nsec_t>(std::chrono::system_clock::now().time_since_epoch()).count();
         if (_useLogs)

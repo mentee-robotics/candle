@@ -15,6 +15,7 @@ namespace mab
         motorStatus["position"] = 0.0;
         motorStatus["velocity"] = 0.0;
         motorStatus["torque"] = 0.0;
+        motorStatus["polish_tor"] = 0.0;
         motorStatus["time"] = 0.0;
         motorStatus["seq"] = 0.0;
         motorStatus["temperature"] = 0.0;
@@ -40,6 +41,7 @@ namespace mab
         canId = _canID;
         commandFrame.canId = _canID;
         motorStatus["position"] = 0.0;
+        motorStatus["polish_tor"] = 0.0;
         motorStatus["velocity"] = 0.0;
         motorStatus["torque"] = 0.0;
         motorStatus["time"] = 0.0;
@@ -47,6 +49,7 @@ namespace mab
         motorStatus["temperature"] = 0.0;
     }
 
+    
     Md80::~Md80()
     {
     }
@@ -193,17 +196,20 @@ namespace mab
         if (_responseFrame->canId != canId || _responseFrame->fromMd80.data[0] != Md80FrameId_E::RESPONSE_DEFAULT)
             return;
         errorVector = *(uint16_t *)&_responseFrame->fromMd80.data[1];
+        prevPosition = position;
         motorStatus["temperature"] = temperature = _responseFrame->fromMd80.data[3];
         motorStatus["position"] = position = *(float *)&_responseFrame->fromMd80.data[4];
-        motorStatus["velocity"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
-        motorStatus["torque"] = torque = *(float *)&_responseFrame->fromMd80.data[12];
+        motorStatus["polish_tor"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
+        motorStatus["torque"] = torque = *(float *)&_responseFrame->fromMd80.data[12];     
     }
 
     void Md80::__updateResponseData(StdMd80ResponseFrame_t *_responseFrame, double time, int seq)
     {
         this->__updateResponseData(_responseFrame);
+        motorStatus["velocity"] = (position - prevPosition) / (time - prevTime);
         motorStatus["time"] = time;
         motorStatus["seq"] = seq;
+        prevTime = time;
     }
 
     void Md80::__updateRegulatorsAdjusted(bool adjusted)
