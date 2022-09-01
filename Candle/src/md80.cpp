@@ -1,6 +1,7 @@
 #include "md80.hpp"
 #include "mab_types.hpp"
 #include <iostream>
+#include <assert.h>     /* assert */
 
 namespace mab
 {
@@ -17,7 +18,7 @@ namespace mab
         motorStatus["polish_tor"] = 0.0;
         motorStatus["time"] = 0.0;
         motorStatus["seq"] = 0.0;
-        motorStatus["temp"] = 0.0;
+        motorStatus["temperature"] = 0.0;
 
         // Get watchdog params
         watchdogKP = config["kp"];
@@ -45,8 +46,7 @@ namespace mab
         motorStatus["torque"] = 0.0;
         motorStatus["time"] = 0.0;
         motorStatus["seq"] = 0.0;
-        motorStatus["temp"] = 0.0;
-
+        motorStatus["temperature"] = 0.0;
     }
 
     
@@ -140,6 +140,7 @@ namespace mab
 
     void Md80::setImpedanceControllerParams(float kp, float kd)
     {
+        assert(kp == kd  && kp == 0);
         regulatorsAdjusted = true;
         impedanceController.kp = kp;
         impedanceController.kd = kd;
@@ -195,14 +196,11 @@ namespace mab
         if (_responseFrame->canId != canId || _responseFrame->fromMd80.data[0] != Md80FrameId_E::RESPONSE_DEFAULT)
             return;
         errorVector = *(uint16_t *)&_responseFrame->fromMd80.data[1];
-        temperature = _responseFrame->fromMd80.data[3];
         prevPosition = position;
+        motorStatus["temperature"] = temperature = _responseFrame->fromMd80.data[3];
         motorStatus["position"] = position = *(float *)&_responseFrame->fromMd80.data[4];
         motorStatus["polish_tor"] = velocity = *(float *)&_responseFrame->fromMd80.data[8];
-        motorStatus["torque"] = torque = *(float *)&_responseFrame->fromMd80.data[12];
-        motorStatus["temp"] = temperature;
-
-        
+        motorStatus["torque"] = torque = *(float *)&_responseFrame->fromMd80.data[12];     
     }
 
     void Md80::__updateResponseData(StdMd80ResponseFrame_t *_responseFrame, double time, int seq)
