@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mab_types.hpp"
+#include "kalman_filter.hpp"
 
 #include <cstdint>
 #include <cmath>
@@ -10,7 +11,6 @@
 #include <algorithm>
 #include <numeric>
 #include <Eigen/Dense>
-#include <kalman_filter.hpp>
 
 typedef std::map<std::string, double> MotorStatus_T;
 typedef std::map<std::string, float> MotorCommand_T;
@@ -110,6 +110,8 @@ namespace mab
         void packPositionFrame();
         void packVelocityFrame();
         void packMotionTargetsFrame();
+
+        // our private add function
         void watchdog();
         void updateTargets();
         void setImpedanceControllerParams(float kp, float kd);
