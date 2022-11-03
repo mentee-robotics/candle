@@ -86,5 +86,3 @@ if(NOT DEFINED CANDLE_OMIT_EXAMPLES)
     target_link_libraries(example11 candle)
 
 endif()
-
-
