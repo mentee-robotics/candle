@@ -359,7 +359,7 @@ bool Candle::addMd80(uint16_t canId, MotorCommand_T config, bool printFailure)
 				vout << "Added Md80." << statusOK << std::endl;
 				md80s.insert(std::pair<int, Md80>(canId, Md80(canId, config)));
 				md80Ids.push_back(canId);
-				//md80s.push_back(Md80(canId)); //TODO: make sure this is correct
+				//md80s.push_back(Md80(canId));
 				mab::Md80& newDrive = md80s.at(canId);
 				sendGetInfoFrame(newDrive);
 				sendMotionCommand(newDrive, newDrive.getPosition(), 0.0f, 0.0f);
