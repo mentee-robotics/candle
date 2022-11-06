@@ -8,9 +8,10 @@ where:
 
 compile_py=0
 
-while getopts "h:" flag
+while getopts "ph:" flag
 do
     case "${flag}" in
+        p) compile_py=1;;
         h) echo "$usage"
           exit;;
         *) echo "usage: $0 [-r]" >&2
@@ -22,13 +23,25 @@ rm -rf build
 mkdir build
 cd build
 
-echo "#############################Build C++ library#################################33"
-cmake ..
+if [ $compile_py -eq 1 ]; then
+    echo "#############################Build pybind#################################33"
+    cmake .. -DCANDLE_BUILD_PYTHON=TRUE    
+else
+    echo "#############################Build C++ library#################################33"
+    cmake ..
+fi
 
 make
 
-cp ../build/libcandle.so ../../ros2_workspace/candle_ros2/lib/
-cp -r ../include/* ../../ros2_workspace/candle_ros2/include/Candle/
+if [ $compile_py -eq 1 ]; then
+    echo "Installing pybind via pip"
+    cp pyCandle/pyCandle* ../candle_pip/src/mab/
+    cd ../candle_pip/
+    pip install .
+else
+    cp ../build/libcandle.so ../../ros2_workspace/candle_ros2/lib/
+    cp -r ../include/* ../../ros2_workspace/candle_ros2/include/Candle/
+fi
 
 echo "I am DONE"
 cd ..
