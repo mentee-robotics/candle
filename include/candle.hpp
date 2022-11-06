@@ -91,8 +91,6 @@ namespace mab
         bool printVerbose = true;
         bool _useLogs = false;
 
-		bool printVerbose = true;
-
 		/* controller limits */
 		const uint16_t driverMinBandwidth = 50;
 		const uint16_t driverMaxBandwidth = 2500;

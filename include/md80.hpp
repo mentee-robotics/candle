@@ -45,6 +45,7 @@ class Md80
 	float torqueSet = 0.0f;
 	float maxTorque = 1.0f;
 	float maxVelocity = 100.0f;
+	int frameId = -1;
 	RegPid_t velocityController;
 	RegPid_t positionController;
 	RegImpedance_t impedanceController;
@@ -152,7 +153,7 @@ class Md80
 	 * @param kp Displacement gain ( analogic to 'k' parameter of the spring-damper equation)
 	 * @param kd Damping coefficient (analogin to 'b' parameter of the spring-damper equation)
 	 */
-	void setImpedanceControllerParams(float kp, float kd);
+	void setImpedanceRequestedControllerParams(float kp, float kd);
 	void setPIDParams(MotorCommand_T pidParams);
 	/**
      * @brief Set the coeffs for savgol filter vel compute
@@ -181,7 +182,7 @@ class Md80
 	 * @brief Set the Target Position for Position PID and Impedance modes.
 	 * @param target target position in radians
 	 */
-	void setTargetPosition(float target) { positionTarget = target; };
+	void setTargetPosition(float target);
 	/**
 	 * @brief Set the Target Velocity for Velocity PID and Impedance modes.
 	 * @param target target velocity in rad/s (radians per second)

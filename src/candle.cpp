@@ -569,8 +569,8 @@ bool Candle::configCandleBaudrate(CANdleBaudrate_E canBaudrate, bool printVersio
 Md80& Candle::getMd80FromList(uint16_t id)
 {
 	for (int i = 0; i < (int)md80s.size(); i++)
-		if (md80s.count(canId))
-			return md80s.at(canId);
+		if (md80s.count(id))
+			return md80s.at(id);
 	throw "getMd80FromList(id): Id not found on the list!";
 }
 bool Candle::controlMd80SetEncoderZero(Md80& drive)
@@ -767,7 +767,7 @@ void Candle::transmitNewStdFrame()
         std::to_string(md80Drive.getVelocity()) + " " +
         std::to_string(md80Drive.getTorque()) + " ";
         frameIds.push_back(md80Drive.getFrameId());
-		*(StdMd80CommandFrame_t*)&tx[1 + i * sizeof(StdMd80CommandFrame_t)] = md80s[i].__getCommandFrame();
+		*(StdMd80CommandFrame_t*)&tx[1 + i * sizeof(StdMd80CommandFrame_t)] = md80Drive.__getCommandFrame();
 		i++;
 	}
 

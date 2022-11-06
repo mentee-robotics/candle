@@ -1,8 +1,9 @@
+
+#include "candle.hpp"
+
 #include <unistd.h>
 
 #include <iostream>
-
-#include "candle.hpp"
 
 int main()
 {
@@ -13,7 +14,7 @@ int main()
 	sched_setscheduler(0, SCHED_FIFO, &sp);
 
 	// Create CANdle object and set FDCAN baudrate to 8Mbps
-	mab::Candle candle(mab::CAN_BAUD_8M, true, mab::CANdleFastMode_E::NORMAL, true, mab::BusType_E::UART);
+	mab::Candle candle(mab::CAN_BAUD_8M, true, true, mab::CANdleFastMode_E::NORMAL, true, mab::BusType_E::UART);
 
 	// Ping FDCAN bus in search of drives
 	auto ids = candle.ping(mab::CAN_BAUD_8M);
@@ -43,8 +44,8 @@ int main()
 	{
 		// Once again we loop over all drives, this time setting thier position target. All drives should now perform
 		// a nice synchronized movement.
-		for (auto& md : candle.md80s)
-			md.setTargetPosition(sin(t) * 2.0f);
+		for (auto const& [key, val] : candle.md80s)
+			val.setTargetPosition(sin(t) * 2.0f);
 
 		t += dt;
 		usleep(1000);
