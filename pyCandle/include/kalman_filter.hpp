@@ -60,7 +60,6 @@ public:
   */
   void update(const Eigen::VectorXd& y, double dt, const Eigen::MatrixXd A);
   bool isIntialized() { return initialized;} ;
-  
   /**
   * Return the current state and time.
   */

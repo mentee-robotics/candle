@@ -31,7 +31,7 @@ namespace mab
         std::map<int, int> motorIdToCandleId;
         std::thread publishThread;
         bool stopMe = true;
-        
+
         bool _useLogs;
         void publish();
 

@@ -7,7 +7,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_BUILD_TYPE Release)
 add_compile_options(-Wall -Wextra -Wpedantic)
 
-# Eigen 
+# Eigen
 find_package(Eigen3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 message("EIGEN3_INCLUDE_DIR: " ${EIGEN3_INCLUDE_DIR})
@@ -33,7 +33,7 @@ file(GLOB CANDLE_SOURCE "src/*cpp")
 
 add_definitions( -DCANDLE_BUILD_PYTHON=${CANDLE_BUILD_PYTHON} )
 
-if(CANDLE_BUILD_STATIC)
+if(DEFINED CANDLE_BUILD_PYTHON)
     set(CANDLE_BUILD_STATIC "TRUE")
     set(CANDLE_BUILD_SHARED "FALSE")
     add_library(candle STATIC ${CANDLE_SOURCE})
@@ -42,11 +42,11 @@ else()
     set(CANDLE_BUILD_STATIC "FALSE")
     set(CANDLE_BUILD_SHARED "TRUE")
     add_library(candle SHARED ${CANDLE_SOURCE})
-    add_subdirectory(pyCandle)
-endif()	
+endif()
 
-message(STATUS "\nCANDLE_BUILD_SHARED: ${CANDLE_BUILD_SHARED}\nCANDLE_BUILD_STATIC: ${CANDLE_BUILD_STATIC}")
+message(STATUS "\nCANDLE_BUILD_SHARED: ${CANDLE_BUILD_SHARED}\nCANDLE_BUILD_STATIC: ${CANDLE_BUILD_STATIC}\nCANDLE_BUILD_PYTHON: ${CANDLE_BUILD_PYTHON}")
 
 target_include_directories (candle PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 target_link_libraries(candle pthread)
+ament_target_dependencies(candle rclcpp sensor_msgs)
 set_target_properties(candle PROPERTIES PUBLIC_HEADER candle.hpp)
