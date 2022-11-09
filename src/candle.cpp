@@ -60,6 +60,7 @@ Candle::Candle(CANdleBaudrate_E canBaudrate, bool _printVerbose, bool useLogs, m
 				if (newIdCount == instances.size())
 				{
 					bus->usb = new UsbDevice(entry, "MAB_Robotics", "MD_USB-TO-CAN", bus->getRxBuffer(), bus->getRxBufferSize());
+					candleId = newIdCount;
 					goto loopdone;	// Only legit use of goto left in C++
 				}
 			}
