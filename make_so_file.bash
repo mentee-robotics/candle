@@ -3,7 +3,6 @@ usage="$(basename "$0") [-h] [-l launch-file] [-b true|false] [-m true|false] [-
 -- this script runs menteebot light code
 
 where:
-    -p create candlePy.so to create pybind and also install with pip
     -h print usage
     "
 
@@ -34,15 +33,14 @@ fi
 
 make
 
-
 if [ $compile_py -eq 1 ]; then
     echo "Installing pybind via pip"
     cp pyCandle/pyCandle* ../candle_pip/src/mab/
     cd ../candle_pip/
     pip install .
 else
-    cp Candle/libcandle.so ../../ros2_workspace/candle_ros2/lib/
-    cp -r ../Candle/include/* ../../ros2_workspace/candle_ros2/include/Candle/
+    cp ../build/libcandle.so ../../ros2_workspace/candle_ros2/lib/
+    cp -r ../include/* ../../ros2_workspace/candle_ros2/include/Candle/
 fi
 
 echo "I am DONE"
