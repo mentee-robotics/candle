@@ -169,7 +169,7 @@ void Candle::receive()
 				{
 					//md80s[i].__updateResponseData((StdMd80ResponseFrame_t*)bus->getRxBuffer(1 + i * sizeof(StdMd80ResponseFrame_t)));
 					StdMd80ResponseFrame_t* frame = (StdMd80ResponseFrame_t*)bus->getRxBuffer(1 + i * sizeof(StdMd80ResponseFrame_t));
-					md80s.at(frame->canId).__updateResponseData(frame);
+					md80s.at(frame->canId).__updateResponseData(frame, timeInSec, receive_count);
 					if (_useLogs)
                         {
                             auto motorStatus = md80s.at(frame->canId).getMotorStatus();
