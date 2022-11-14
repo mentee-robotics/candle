@@ -227,16 +227,35 @@ void Candle::transmit()
 #if BENCHMARKING == 1
 			bool flag = false;
 #endif
+			uint64_t nsec = std::chrono::duration_cast<nsec_t>(std::chrono::system_clock::now().time_since_epoch()).count();
+            double timeInSec = nsec * 1e-9;
+            if (_useLogs)
+                receiveLogFile << std::to_string(receive_count) << "," << std::to_string(timeInSec);
 			for (int i = 0; i < (int)md80s.size(); i++)
 			{
 				//md80s[i].__updateResponseData((StdMd80ResponseFrame_t*)bus->getRxBuffer(1 + i * sizeof(StdMd80ResponseFrame_t)));
 				StdMd80ResponseFrame_t* frame = (StdMd80ResponseFrame_t*)bus->getRxBuffer(1 + i * sizeof(StdMd80ResponseFrame_t));
-				md80s.at(frame->canId).__updateResponseData(frame);
+				md80s.at(frame->canId).__updateResponseData(frame, timeInSec, receive_count);
 #if BENCHMARKING == 1
 				StdMd80ResponseFrame_t* _responseFrame = (StdMd80ResponseFrame_t*)bus->getRxBuffer(1 + i * sizeof(StdMd80ResponseFrame_t));
 				if (*(uint16_t*)&_responseFrame->fromMd80.data[1] & (1 << 15)) flag = true;
 #endif
+				if (_useLogs)
+                {
+                    auto motorStatus = md80s.at(frame->canId).getMotorStatus();
+                    receiveLogFile << "," << std::to_string(frame->canId) << ":" << std::to_string(motorStatus["position"])
+                                   << " " << std::to_string(motorStatus["velocity"])
+                                   << " " << std::to_string(motorStatus["torque"])
+                                   << " " << std::to_string(motorStatus["our_velocity"])
+                                   << " " << std::to_string(motorStatus["savgol_vel"])
+                                   << " " << std::to_string(motorStatus["kalman_vel"])
+                                   << " " << std::to_string(motorStatus["temperature"]);
+                }
 			}
+			if (_useLogs)
+                receiveLogFile << std::endl;
+
+            receive_count++;
 
 #if BENCHMARKING == 1
 
