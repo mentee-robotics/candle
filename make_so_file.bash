@@ -33,11 +33,26 @@ fi
 
 make
 
+file_name=""
+
 if [ $compile_py -eq 1 ]; then
     echo "Installing pybind via pip"
     cp pyCandle/pyCandle* ../candle_pip/src/mab/
+    for entry in '../candle_pip/src/mab/'*
+    do
+        if [[ "$entry" == *"pyCandle.cpython"* ]];then
+            arrIN=(${entry//// })
+            file_name=${arrIN[-1]}
+        fi
+    done
+
     cd ../candle_pip/
-    pip install .
+
+    ##grep -E -o "*\('mab': \['*" ./setup.py
+
+    sed -i "s/pyCandle.cpython-38-x86_64-linux-gnu.so/${file_name}/" ./setup.py
+    #sed -E "s/('mab': \[')(\w*)('\])/\1$file_name\3/g" ./setup.py
+    pip install . --user
 else
     cp ../build/libcandle.so ../../ros2_workspace/candle_ros2/lib/
     cp -r ../include/* ../../ros2_workspace/candle_ros2/include/Candle/
